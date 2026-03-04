@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environment
+.venv/
+
+# Editor
+.vscode/
+
+# Generated font output folders
+mixed-fonts/
+out/
+out-all/
+all-combinations/
+all-combinations-*/
+
+# Download/extract work dirs
+downloads/
+extracted/
