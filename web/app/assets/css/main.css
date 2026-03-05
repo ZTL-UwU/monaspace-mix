@@ -1,0 +1,26 @@
+@import 'tailwindcss';
+@import '@nuxt/ui';
+
+:root {
+  --ui-primary: black;
+  --ui-header-height: --spacing(20);
+
+  --color-neon: rgb(245 184 165);
+  --color-argon: rgb(241 225 112);
+  --color-xenon: rgb(182 209 98);
+  --color-radon: rgb(130 210 207);
+  --color-krypton: rgb(188 154 250);
+}
+
+.dark {
+  --ui-primary: white;
+}
+
+@theme {
+  --font-sans: 'Monaspace Neon', monospace;
+  --font-neon: 'Monaspace Neon', monospace;
+  --font-argon: 'Monaspace Argon', monospace;
+  --font-radon: 'Monaspace Radon', monospace;
+  --font-xenon: 'Monaspace Xenon', monospace;
+  --font-krypton: 'Monaspace Krypton', monospace;
+}

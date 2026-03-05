@@ -41,10 +41,28 @@ python mix_fonts.py \
 ## Generate every combination
 
 ```bash
-python generate_all_mixes.py --overwrite
+python generate_all_mixes.py --overwrite --zip-output
 ```
 
-Useful flags: `--include-self`, `--limit N`, `--output-root PATH`, `--zip-url URL`.
+By default, this now generates both variants:
+
+- NF mixes from `monaspace-nerdfonts-*.zip` (output names include `NF`)
+- non-NF mixes from `monaspace-static-*.zip`
+
+To generate only ZIP files and remove intermediate folders:
+
+```bash
+python generate_all_mixes.py --overwrite --zip-only
+```
+
+Generate only one variant:
+
+```bash
+python generate_all_mixes.py --variants nf --overwrite --zip-output
+python generate_all_mixes.py --variants non-nf --overwrite --zip-output
+```
+
+Useful flags: `--include-self`, `--limit N`, `--output-root PATH`, `--zip-output`, `--zip-dir PATH`, `--zip-only`, `--variants`, `--nf-zip-url`, `--non-nf-zip-url`.
 
 ## License
 
