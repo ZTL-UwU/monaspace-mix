@@ -20,7 +20,7 @@ export default defineNuxtConfig({
   },
 
   shiki: {
-    bundledLangs: ['ts', 'json'],
+    bundledLangs: ['ts', 'json', 'python', 'rust', 'go'],
     bundledThemes: ['github-dark-default'],
     defaultTheme: 'github-dark-default',
   },

@@ -1,6 +1,11 @@
-# Monaspace Font Mixer
+![Monaspace Mix](./hero.png)
 
-Mix one family for upright styles and another for italic styles.
+Create your own [Monaspace](https://github.com/githubnext/monaspace) font by mixing and matching styles from different Monaspace variants.
+
+Build your mixed fonts [here](monaspace-mix.ztluwu.dev).
+
+<details>
+  <summary><bold>Font Mixer</bold></summary>
 
 ## Install
 
@@ -63,6 +68,8 @@ python generate_all_mixes.py --variants non-nf --overwrite --zip-output
 ```
 
 Useful flags: `--include-self`, `--limit N`, `--output-root PATH`, `--zip-output`, `--zip-dir PATH`, `--zip-only`, `--variants`, `--nf-zip-url`, `--non-nf-zip-url`.
+
+</details>
 
 ## License
 

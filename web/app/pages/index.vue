@@ -8,10 +8,11 @@
   <UContainer>
     <UPageHero :links="links">
       <template #title>
-        <span>Monaspace </span>
-        <span class="font-neon text-(--color-neon)">M</span>
-        <span class="font-radon text-(--color-radon)">i</span>
-        <span class="font-xenon text-(--color-xenon)">x</span>
+        <span class="glow" data-text="Monaspace ">Monaspace</span>
+        <span>&nbsp;</span>
+        <span class="glow font-neon text-(--color-neon)" data-text="M">M</span>
+        <span class="glow font-radon text-(--color-radon)" data-text="i">i</span>
+        <span class="glow font-xenon text-(--color-xenon)" data-text="x">x</span>
       </template>
     </UPageHero>
     <div class="grid md:grid-cols-6 gap-4 md:gap-10">
@@ -23,13 +24,21 @@
         }"
       >
         <template #header>
-          <UTabs color="neutral" variant="link" :content="false" :items="tabItems" class="w-full" />
+          <UTabs
+            v-model="selectedLanguage"
+            color="neutral"
+            variant="link"
+            :content="false"
+            :items="tabItems"
+            class="w-full"
+          />
         </template>
         <div class="max-h-92 overflow-y-auto px-8 py-4">
-          <Ts
+          <CodePreview
             :regular-font="regularFontFamily"
             :italic-font="italicFontFamily"
             :copilot-font="copilotFontFamily"
+            :sample="currentSample"
           />
         </div>
       </UCard>
@@ -49,7 +58,7 @@
         <UCheckbox v-model="useNF" label="Use Nerd Fonts" class="p-5" />
       </UCard>
     </div>
-    <div class="grid md:grid-cols-6 mt-4 md:mt-10 gap-4 md:gap-0">
+    <div class="grid md:grid-cols-6 mt-4 md:mt-10 gap-4 md:gap-0 mb:24 sm:mb-32 lg:mb-40">
       <UPageCard
         variant="subtle"
         icon="tabler:circle-number-1"
@@ -61,7 +70,7 @@
         class="md:rounded-none first:rounded-l-lg last:rounded-r-lg md:col-span-2"
       >
         <div>
-          <UButton icon="lucide:download" size="xl" variant="soft" class="w-full">
+          <UButton icon="lucide:download" size="xl" variant="soft" class="w-full" :to="downloadLink" target="_blank">
             Download
           </UButton>
           <div class="flex items-center gap-2 mt-4 px-3 text-muted text-xs">
@@ -91,24 +100,28 @@
 
 <script setup lang="ts">
 import type { ButtonProps, TabsItem } from '@nuxt/ui';
+import { codeSamples } from '~/utils/codeSamples';
+
+useSeoMeta({
+  title: 'Monaspace Mix',
+  description: 'Monaspace Mix is a collection of patched Monaspace fonts that you can mix and match to create your own unique coding font.',
+});
 
 definePageMeta({
   colorMode: 'dark',
 });
 
-const tabItems = ref<TabsItem[]>([
-  {
-    label: 'TypeScript',
-    slot: 'ts',
-  },
-]);
+const tabItems: TabsItem[] = codeSamples.map(sample => ({
+  label: sample.label,
+  value: sample.value,
+}));
 
 const links = ref<ButtonProps[]>([
   {
     label: 'GitHub',
     to: 'https://github.com/ZTL-UwU/monaspace-mix',
     icon: 'lucide:github',
-    variant: 'soft',
+    variant: 'ghost',
   },
   {
     label: 'Sponsor',
@@ -138,11 +151,16 @@ const fontFamily: { [key: string]: string } = {
 const regularFont = ref('Neon');
 const italicFont = ref('Radon');
 const copilotFont = ref('Krypton');
+const selectedLanguage = ref(codeSamples[0]?.value ?? 'typescript');
 const useNF = ref(false);
 
 const regularFontFamily = computed(() => fontFamily[regularFont.value] ?? 'Monaspace Neon');
 const italicFontFamily = computed(() => fontFamily[italicFont.value] ?? 'Monaspace Radon');
 const copilotFontFamily = computed(() => fontFamily[copilotFont.value] ?? 'Monaspace Krypton');
+
+const currentSample = computed(() => {
+  return codeSamples.find(sample => sample.value === selectedLanguage.value) ?? codeSamples[0]!;
+});
 
 const mixedFontName = computed(() => {
   return `Monaspace Mix ${regularFont.value}-${italicFont.value}${useNF.value ? ' NF' : ''}`;
@@ -177,6 +195,10 @@ const checkIconRef = useTemplateRef('checkIconRef');
 onClickOutside(checkIconRef, () => {
   copied.value = false;
 });
+
+const downloadLink = computed(() => {
+  return `https://github.com/ZTL-UwU/monaspace-mix/releases/latest/download/${fileName.value}`;
+});
 </script>
 
 <style lang="css">
@@ -195,8 +217,10 @@ onClickOutside(checkIconRef, () => {
   left: 0;
   width: 100%;
   height: 100%;
+  color: currentColor;
   opacity: 60%;
   filter: blur(6px);
+  pointer-events: none;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   -moz-backface-visibility: hidden;

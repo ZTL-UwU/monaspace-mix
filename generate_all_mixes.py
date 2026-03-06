@@ -397,7 +397,7 @@ def main() -> None:
             )
 
             if args.zip_output:
-                zip_name_base = f"{regular_short}-{italic_short}"
+                zip_name_base = f"Monaspace-Mix-{regular_short}-{italic_short}"
                 if variant == "nf":
                     zip_name_base = f"{zip_name_base}-NF"
                 zip_path = args.zip_dir / f"{zip_name_base}.zip"
