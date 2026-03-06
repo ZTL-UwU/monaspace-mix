@@ -2,7 +2,7 @@
 
 Create your own [Monaspace](https://github.com/githubnext/monaspace) font by mixing and matching styles from different Monaspace variants.
 
-Build your mixed fonts [here](monaspace-mix.ztluwu.dev).
+Build your mixed fonts [here](https://monaspace-mix.ztluwu.dev).
 
 <details>
   <summary><bold>Font Mixer</bold></summary>
