@@ -10,6 +10,7 @@ export default defineNuxtConfig({
     '@nuxt/icon',
     '@nuxt/ui',
     'nuxt-shiki',
+    'nuxt-umami',
   ],
 
   icon: {
@@ -30,6 +31,11 @@ export default defineNuxtConfig({
   },
 
   css: ['~/assets/css/main.css'],
+
+  umami: {
+    id: 'c6528c3b-6dde-4f9e-befb-b6bdd5e4b057',
+    host: 'https://cloud.umami.is/',
+  },
 
   compatibilityDate: '2025-12-14',
 });
