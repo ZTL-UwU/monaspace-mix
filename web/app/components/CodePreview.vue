@@ -4,6 +4,7 @@
     :style="{
       '--regular': regularFont,
       '--italic': italicFont,
+      '--italic-style': italicFromUpright ? 'normal' : 'italic',
       '--copilot': copilotFont,
     }"
   >
@@ -23,6 +24,7 @@ const props = defineProps<{
   regularFont: string;
   italicFont: string;
   copilotFont: string;
+  italicFromUpright: boolean;
   sample: CodeSample;
 }>();
 
@@ -39,7 +41,7 @@ const highlightOptions = computed(() => ({
     },
     properties: decoration.kind === 'copilot'
       ? { style: 'font-family: var(--copilot);', class: 'copilot-line' }
-      : { style: 'font-family: var(--italic); font-style: italic;' },
+      : { style: 'font-family: var(--italic); font-style: var(--italic-style);' },
   })),
 }));
 </script>

@@ -43,6 +43,18 @@ python mix_fonts.py \
 - Italic styles come from `--italic-dir`.
 - Missing styles are skipped (use `--strict` to fail).
 
+To build italic outputs from upright files in `--italic-dir` (for example, use Radon `Regular` as output `Italic`):
+
+```bash
+python mix_fonts.py \
+  --regular-dir "/path/to/NerdFonts/Monaspace Argon" \
+  --italic-dir "/path/to/NerdFonts/Monaspace Radon" \
+  --italic-from-upright \
+  --name "Monaspace Mix NF" \
+  --output-dir ./out-all \
+  --overwrite
+```
+
 ## Generate every combination
 
 ```bash
@@ -67,7 +79,15 @@ python generate_all_mixes.py --variants nf --overwrite --zip-output
 python generate_all_mixes.py --variants non-nf --overwrite --zip-output
 ```
 
-Useful flags: `--include-self`, `--limit N`, `--output-root PATH`, `--zip-output`, `--zip-dir PATH`, `--zip-only`, `--variants`, `--nf-zip-url`, `--non-nf-zip-url`.
+Generate an additional UprightItalic variant alongside the classic output for every combination:
+
+```bash
+python generate_all_mixes.py --italic-from-upright --overwrite --zip-output
+```
+
+This adds outputs suffixed with `-UprightItalic` (and `-UprightItalic-NF` for Nerd Fonts).
+
+Useful flags: `--include-self`, `--italic-from-upright`, `--limit N`, `--output-root PATH`, `--zip-output`, `--zip-dir PATH`, `--zip-only`, `--variants`, `--nf-zip-url`, `--non-nf-zip-url`.
 
 </details>
 

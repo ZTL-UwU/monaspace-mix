@@ -171,6 +171,7 @@ def run_mix(
     family_name: str,
     output_dir: Path,
     overwrite: bool,
+    italic_from_upright: bool,
 ) -> None:
     command = [
         python_exec,
@@ -186,6 +187,8 @@ def run_mix(
     ]
     if overwrite:
         command.append("--overwrite")
+    if italic_from_upright:
+        command.append("--italic-from-upright")
 
     process = subprocess.run(command, text=True, capture_output=True)
     if process.returncode != 0:
@@ -283,6 +286,14 @@ def parse_args() -> argparse.Namespace:
         help="Include combinations where regular and italic families are the same (disabled by default).",
     )
     parser.add_argument(
+        "--italic-from-upright",
+        action="store_true",
+        help=(
+            "Generate an additional variant where italic output styles are built from upright files "
+            "in the second family directory (e.g., Italic uses Regular)."
+        ),
+    )
+    parser.add_argument(
         "--overwrite", action="store_true", help="Overwrite existing generated files."
     )
     parser.add_argument(
@@ -372,40 +383,53 @@ def main() -> None:
         variant_output_root = args.output_root / variant if multi_variant else args.output_root
         variant_output_root.mkdir(parents=True, exist_ok=True)
 
-        total = len(combinations)
+        mix_modes: list[tuple[str, bool]] = [("classic", False)]
+        if args.italic_from_upright:
+            mix_modes.append(("upright-italic", True))
+
+        total = len(combinations) * len(mix_modes)
         variant_totals[variant] = total
-        for index, (regular_dir, italic_dir) in enumerate(combinations, start=1):
+        index = 0
+        for regular_dir, italic_dir in combinations:
             regular_short = short_family_name(regular_dir)
             italic_short = short_family_name(italic_dir)
-            family_name = f"Monaspace Mix {regular_short}-{italic_short}{variant_suffix}"
-            combo_dir_name = f"Monaspace-Mix-{regular_short}-{italic_short}"
-            if variant == "nf":
-                combo_dir_name = f"{combo_dir_name}-NF"
-            combo_out_dir = variant_output_root / combo_dir_name
 
-            print(
-                f"[{variant_label}] [{index}/{total}] {regular_short} + {italic_short} -> {combo_out_dir}"
-            )
-            run_mix(
-                mixer_script=mixer_script,
-                python_exec=sys.executable,
-                regular_dir=regular_dir,
-                italic_dir=italic_dir,
-                family_name=family_name,
-                output_dir=combo_out_dir,
-                overwrite=args.overwrite,
-            )
+            for mode_name, use_upright_italic in mix_modes:
+                index += 1
+                mode_label = "" if mode_name == "classic" else " UprightItalic"
+                mode_dir_suffix = "" if mode_name == "classic" else "-UprightItalic"
 
-            if args.zip_output:
-                zip_name_base = f"Monaspace-Mix-{regular_short}-{italic_short}"
+                family_name = f"Monaspace Mix {regular_short}-{italic_short}{mode_label}{variant_suffix}"
+                combo_dir_name = f"Monaspace-Mix-{regular_short}-{italic_short}{mode_dir_suffix}"
                 if variant == "nf":
-                    zip_name_base = f"{zip_name_base}-NF"
-                zip_path = args.zip_dir / f"{zip_name_base}.zip"
-                zip_directory(combo_out_dir, zip_path, overwrite=args.overwrite)
-                print(f"  Zipped -> {zip_path}")
-                if args.zip_only:
-                    shutil.rmtree(combo_out_dir)
-                    print(f"  Removed directory -> {combo_out_dir}")
+                    combo_dir_name = f"{combo_dir_name}-NF"
+                combo_out_dir = variant_output_root / combo_dir_name
+
+                print(
+                    f"[{variant_label}] [{index}/{total}] {regular_short} + {italic_short} "
+                    f"({mode_name}) -> {combo_out_dir}"
+                )
+                run_mix(
+                    mixer_script=mixer_script,
+                    python_exec=sys.executable,
+                    regular_dir=regular_dir,
+                    italic_dir=italic_dir,
+                    family_name=family_name,
+                    output_dir=combo_out_dir,
+                    overwrite=args.overwrite,
+                    italic_from_upright=use_upright_italic,
+                )
+
+                if args.zip_output:
+                    zip_name_base = f"Monaspace-Mix-{regular_short}-{italic_short}{mode_dir_suffix}"
+                    if variant == "nf":
+                        zip_name_base = f"{zip_name_base}-NF"
+                    zip_path = args.zip_dir / f"{zip_name_base}.zip"
+                    zip_directory(combo_out_dir, zip_path, overwrite=args.overwrite)
+                    print(f"  Zipped -> {zip_path}")
+                    if args.zip_only:
+                        shutil.rmtree(combo_out_dir)
+                        print(f"  Removed directory -> {combo_out_dir}")
 
     print("Done. Generated combinations:")
     for variant in variants:

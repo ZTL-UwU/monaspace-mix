@@ -32,6 +32,12 @@ def is_italic_style(style_name: str) -> bool:
     return style_name.lower().endswith("italic")
 
 
+def upright_style_for_italic(style_name: str) -> str:
+    if not is_italic_style(style_name):
+        return style_name
+    return style_name[:-6] or "Regular"
+
+
 def collect_style_map(font_dir: Path) -> dict[str, Path]:
     style_map: dict[str, Path] = {}
     for font_path in sorted(font_dir.glob("*.otf")):
@@ -137,6 +143,14 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Fail if a style exists in only one source directory. By default, missing styles are skipped.",
     )
+    parser.add_argument(
+        "--italic-from-upright",
+        action="store_true",
+        help=(
+            "In directory mode, build italic output styles from upright source files in --italic-dir "
+            "(e.g., BoldItalic uses Bold, Italic uses Regular)."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -212,8 +226,11 @@ def run_dir_mode(args: argparse.Namespace) -> list[Path]:
     missing_styles: list[str] = []
 
     for style in all_styles:
-        source_map = italic_styles if is_italic_style(style) else regular_styles
-        source = source_map.get(style)
+        if is_italic_style(style):
+            source_style = upright_style_for_italic(style) if args.italic_from_upright else style
+            source = italic_styles.get(source_style)
+        else:
+            source = regular_styles.get(style)
         if source is None:
             missing_styles.append(style)
             continue

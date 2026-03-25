@@ -33,11 +33,12 @@
             class="w-full"
           />
         </template>
-        <div class="max-h-92 overflow-y-auto px-8 py-4">
+        <div class="max-h-107 overflow-y-auto px-8 py-4">
           <CodePreview
             :regular-font="regularFontFamily"
             :italic-font="italicFontFamily"
             :copilot-font="copilotFontFamily"
+            :italic-from-upright="italicFromUpright"
             :sample="currentSample"
           />
         </div>
@@ -48,9 +49,10 @@
           <USelect v-model="regularFont" :items="fontItems" variant="soft" size="lg" class="w-full" />
         </div>
         <div class="border-b border-default p-5">
-          <span class="text-2xl block mb-2 italic" :class="[fontStyle[italicFont]]">Italic</span>
+          <span class="text-2xl block mb-2" :class="[fontStyle[italicFont], { italic: !italicFromUpright }]">Italic</span>
           <USelect v-model="italicFont" :items="fontItems" variant="soft" size="lg" class="w-full" />
         </div>
+        <UCheckbox v-model="italicFromUpright" label="Use upright as italic" class="border-b border-default p-5 truncate" />
         <div class="border-b border-default p-5">
           <span class="text-2xl block mb-2" :class="[fontStyle[copilotFont]]">Copilot</span>
           <USelect v-model="copilotFont" :items="fontItems" variant="soft" size="lg" class="w-full" />
@@ -152,6 +154,7 @@ const regularFont = ref('Neon');
 const italicFont = ref('Radon');
 const copilotFont = ref('Krypton');
 const selectedLanguage = ref(codeSamples[0]?.value ?? 'typescript');
+const italicFromUpright = ref(false);
 const useNF = ref(false);
 
 const regularFontFamily = computed(() => fontFamily[regularFont.value] ?? 'Monaspace Neon');
@@ -163,11 +166,11 @@ const currentSample = computed(() => {
 });
 
 const mixedFontName = computed(() => {
-  return `Monaspace Mix ${regularFont.value}-${italicFont.value}${useNF.value ? ' NF' : ''}`;
+  return `Monaspace Mix ${regularFont.value}-${italicFont.value}${italicFromUpright.value ? ' UprightItalic' : ''}${useNF.value ? ' NF' : ''}`;
 });
 
 const fileName = computed(() => {
-  return `Monaspace-Mix-${regularFont.value}-${italicFont.value}${useNF.value ? '-NF' : ''}.zip`;
+  return `Monaspace-Mix-${regularFont.value}-${italicFont.value}${italicFromUpright.value ? '-UprightItalic' : ''}${useNF.value ? '-NF' : ''}.zip`;
 });
 
 const vscodeSettingCode = computed(() => {
@@ -180,9 +183,10 @@ const vscodeSettingCode = computed(() => {
 const { copy } = useClipboard({ source: vscodeSettingCode, legacy: true });
 const copied = ref(false);
 const toast = useToast();
+const shikiDirectivePattern = /\s*\/\/\s*\[!code (focus|\+\+|--|error|warning)\]/g;
 
 async function handleClick() {
-  await copy(vscodeSettingCode.value.replaceAll(/\s*\/\/\s*\[!code (focus|\+\+|--|error|warning)\]/g, ''));
+  await copy(vscodeSettingCode.value.replaceAll(shikiDirectivePattern, ''));
   copied.value = true;
 
   toast.add({
